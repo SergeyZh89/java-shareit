@@ -16,10 +16,12 @@ public class GlobalExceptionHandler {
     public void handleNotFound(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value());
     }
+
     @ExceptionHandler({EmailAlreadyExistsException.class})
     public void handleBadRequest(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.CONFLICT.value());
     }
+
     @ExceptionHandler({ValidatorExceptions.class})
     public void handleBadValidator(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value());

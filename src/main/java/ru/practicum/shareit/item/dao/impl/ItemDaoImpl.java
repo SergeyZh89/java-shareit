@@ -2,9 +2,7 @@ package ru.practicum.shareit.item.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dao.ItemDao;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
@@ -19,8 +17,8 @@ public class ItemDaoImpl implements ItemDao {
 
     @Override
     public Item getItemById(long itemId) {
-        return items.stream().
-                filter(item -> item.getId() == itemId)
+        return items.stream()
+                .filter(item -> item.getId() == itemId)
                 .findAny().orElseThrow(() -> new ItemNotFoundException("Такой вещи не существует"));
     }
 
@@ -44,7 +42,7 @@ public class ItemDaoImpl implements ItemDao {
             if (itemFound.getId() == itemId) {
                 if (item.getName() != null) {
                     itemFound.setName(item.getName());
-                    }
+                }
                 if (item.getDescription() != null) {
                     itemFound.setDescription(item.getDescription());
                 }
@@ -80,7 +78,8 @@ public class ItemDaoImpl implements ItemDao {
         for (Item item : items) {
             String name = item.getName().toLowerCase();
             String description = item.getDescription().toLowerCase();
-            if ((name.contains(text.toLowerCase()) || description.contains(text.toLowerCase())) && item.getAvailable() && !text.isBlank()){
+            if ((name.contains(text.toLowerCase()) || description.contains(text.toLowerCase()))
+                    && item.getAvailable() && !text.isBlank()) {
                 itemList.add(item);
             }
         }
