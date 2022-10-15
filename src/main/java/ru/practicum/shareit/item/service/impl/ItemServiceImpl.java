@@ -49,22 +49,20 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getDescription() == null) {
             throw new ValidatorExceptions("Неверные данные");
         }
-        return itemDao.addItemByUserId(itemDto, userId);
+        Item item = ItemMapper.toItem(itemDto);
+        return itemDao.addItemByUserId(item, userId);
     }
 
     @Override
     public Item updateItem(long userId, ItemDto itemDto, long itemId) {
-        if (itemId <= 0) {
-            throw new ItemNotFoundException("Такой вещи не существует");
-        }
-        if (userId <= 0) {
+        if (itemId <= 0 || userId <= 0) {
             throw new ItemNotFoundException("Такой вещи не существует");
         }
         List<Item> itemList = itemDao.getAllItemsByUserId(userId);
         itemList.stream()
                 .filter(item -> item.getId() == itemId)
                 .findAny()
-                .orElseThrow(()->new ItemNotFoundException("Такой вещи не существует"));
+                .orElseThrow(() -> new ItemNotFoundException("Такой вещи у пользователя не существует"));
         itemDao.getAllItems().stream()
                 .filter(item -> item.getId() == itemId)
                 .findAny()

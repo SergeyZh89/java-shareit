@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private UserDao userDao;
+    private final UserDao userDao;
 
     @Autowired
     public UserServiceImpl(UserDao userDao) {
@@ -32,10 +32,7 @@ public class UserServiceImpl implements UserService {
         if (userId <= 0) {
             throw new UserNotFoundException("Такого пользователя не существует");
         }
-        return userDao.getAllUsers().stream()
-                .filter(user -> user.getId() == userId)
-                .findAny()
-                .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует"));
+        return userDao.getUserById(userId);
     }
 
     @Override
@@ -46,7 +43,7 @@ public class UserServiceImpl implements UserService {
         User userNew = UserMapper.toUser(userDto);
         for (User user : userDao.getAllUsers()) {
             if (user.getEmail() != null && user.getEmail().equals(userNew.getEmail())) {
-                    throw new EmailAlreadyExistsException("Пользователь с такой почтой уже существует");
+                throw new EmailAlreadyExistsException("Пользователь с такой почтой уже существует");
             }
         }
         return userDao.addUser(userNew);

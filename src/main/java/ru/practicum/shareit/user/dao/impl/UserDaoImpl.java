@@ -29,6 +29,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User getUserById(long userId) {
+        return getAllUsers().stream()
+                .filter(user -> user.getId() == userId)
+                .findAny()
+                .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует"));
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return userList;
     }

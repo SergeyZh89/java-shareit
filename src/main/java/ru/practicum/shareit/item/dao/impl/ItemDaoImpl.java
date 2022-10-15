@@ -25,9 +25,8 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public Item addItemByUserId(ItemDto itemDto, long userId) {
-        itemDto.setId(getGeneratorId());
-        Item item = ItemMapper.toItem(itemDto);
+    public Item addItemByUserId(Item item, long userId) {
+        item.setId(getGeneratorId());
         item.setOwner(userId);
         items.add(item);
         return item;

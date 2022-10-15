@@ -22,5 +22,4 @@ public class Booking {
     private Date end;
     private Item item;
     private User booker;
-
 }
