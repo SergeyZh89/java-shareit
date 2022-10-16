@@ -1,10 +1,10 @@
-package ru.practicum.shareit.booking.item.dao.impl;
+package ru.practicum.shareit.item.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.item.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.booking.item.dao.ItemDao;
-import ru.practicum.shareit.booking.item.model.Item;
+import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.item.dao.ItemDao;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;

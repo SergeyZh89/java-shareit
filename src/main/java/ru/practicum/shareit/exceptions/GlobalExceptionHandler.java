@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.booking.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.user.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 

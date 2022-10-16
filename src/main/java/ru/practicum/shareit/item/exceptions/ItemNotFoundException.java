@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.item.exceptions;
+package ru.practicum.shareit.item.exceptions;
 
 public class ItemNotFoundException extends RuntimeException {
 

@@ -1,13 +1,13 @@
-package ru.practicum.shareit.booking.item.service.impl;
+package ru.practicum.shareit.item.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.item.ItemMapper;
-import ru.practicum.shareit.booking.item.dao.ItemDao;
-import ru.practicum.shareit.booking.item.dto.ItemDto;
-import ru.practicum.shareit.booking.item.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.booking.item.model.Item;
-import ru.practicum.shareit.booking.item.service.ItemService;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.dao.ItemDao;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.exceptions.ValidatorExceptions;
 import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;

@@ -1,6 +1,6 @@
-package ru.practicum.shareit.booking.item.dao;
+package ru.practicum.shareit.item.dao;
 
-import ru.practicum.shareit.booking.item.model.Item;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 

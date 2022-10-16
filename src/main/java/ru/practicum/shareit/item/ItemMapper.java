@@ -1,7 +1,7 @@
-package ru.practicum.shareit.booking.item;
+package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.booking.item.dto.ItemDto;
-import ru.practicum.shareit.booking.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 
 public class ItemMapper {
 
