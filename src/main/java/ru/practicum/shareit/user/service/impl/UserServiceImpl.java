@@ -12,6 +12,7 @@ import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,34 +24,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers() {
-        return userDao.getAllUsers();
+    public List<UserDto> getUsers() {
+        return userDao.getAllUsers().stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public User getUser(long userId) {
+    public UserDto getUser(long userId) {
         if (userId <= 0) {
             throw new UserNotFoundException("Такого пользователя не существует");
         }
-        return userDao.getUserById(userId);
+        return UserMapper.toUserDto(userDao.getUserById(userId));
     }
 
     @Override
-    public User addUser(UserDto userDto) {
+    public UserDto addUser(UserDto userDto) {
         if (userDto.getEmail() == null || !userDto.getEmail().contains("@")) {
             throw new ValidatorExceptions("Введены неверные данные");
         }
         User userNew = UserMapper.toUser(userDto);
-        for (User user : userDao.getAllUsers()) {
-            if (user.getEmail() != null && user.getEmail().equals(userNew.getEmail())) {
-                throw new EmailAlreadyExistsException("Пользователь с такой почтой уже существует");
-            }
-        }
-        return userDao.addUser(userNew);
+        return UserMapper.toUserDto(userDao.addUser(userNew));
     }
 
     @Override
-    public User updateUser(UserDto userDto, long userId) {
+    public UserDto updateUser(UserDto userDto, long userId) {
         if (userId <= 0) {
             throw new UserNotFoundException("Такого пользователя не существует");
         }
@@ -60,7 +58,7 @@ public class UserServiceImpl implements UserService {
                 throw new EmailAlreadyExistsException("Пользователь с такой почтой уже существует");
             }
         }
-        return userDao.updateUserById(userNew, userId);
+        return UserMapper.toUserDto(userDao.updateUserById(userNew, userId));
     }
 
     @Override

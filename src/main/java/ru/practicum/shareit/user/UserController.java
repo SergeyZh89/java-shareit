@@ -8,9 +8,6 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @Slf4j
 @RequestMapping(path = "/users")
@@ -23,25 +20,25 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getUsers() {
+    public List<UserDto> getUsers() {
         log.info("Получен запрос на список пользователей");
         return userService.getUsers();
     }
 
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable long userId) {
+    public UserDto getUser(@PathVariable long userId) {
         log.info("Получен запрос на пользователя под номером: " + userId);
         return userService.getUser(userId);
     }
 
     @PostMapping()
-    public User addUser(@RequestBody UserDto userDto) {
+    public UserDto addUser(@RequestBody UserDto userDto) {
         log.info("Получен запрос на добавление пользователя");
         return userService.addUser(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public User updateUser(@RequestBody UserDto userDto, @PathVariable long userId) {
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable long userId) {
         log.info("Получен запрос на обновление пользователя под номером: " + userId);
         return userService.updateUser(userDto, userId);
     }

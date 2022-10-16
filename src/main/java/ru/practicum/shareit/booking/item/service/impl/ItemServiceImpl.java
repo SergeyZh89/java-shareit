@@ -1,18 +1,19 @@
-package ru.practicum.shareit.item.service.impl;
+package ru.practicum.shareit.booking.item.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.item.ItemMapper;
+import ru.practicum.shareit.booking.item.dao.ItemDao;
+import ru.practicum.shareit.booking.item.dto.ItemDto;
+import ru.practicum.shareit.booking.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.booking.item.model.Item;
+import ru.practicum.shareit.booking.item.service.ItemService;
 import ru.practicum.shareit.exceptions.ValidatorExceptions;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dao.ItemDao;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -26,12 +27,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item getItemById(long itemId) {
-        return itemDao.getItemById(itemId);
+    public ItemDto getItemById(long itemId) {
+        return ItemMapper.toItemDto(itemDao.getItemById(itemId));
     }
 
     @Override
-    public Item addItemByUserId(ItemDto itemDto, long userId) {
+    public ItemDto addItemByUserId(ItemDto itemDto, long userId) {
         if (userId <= 0) {
             throw new UserNotFoundException("Такого пользователя не существует");
         } else {
@@ -50,11 +51,11 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidatorExceptions("Неверные данные");
         }
         Item item = ItemMapper.toItem(itemDto);
-        return itemDao.addItemByUserId(item, userId);
+        return ItemMapper.toItemDto(itemDao.addItemByUserId(item, userId));
     }
 
     @Override
-    public Item updateItem(long userId, ItemDto itemDto, long itemId) {
+    public ItemDto updateItem(long userId, ItemDto itemDto, long itemId) {
         if (itemId <= 0 || userId <= 0) {
             throw new ItemNotFoundException("Такой вещи не существует");
         }
@@ -68,16 +69,20 @@ public class ItemServiceImpl implements ItemService {
                 .findAny()
                 .orElseThrow(() -> new ItemNotFoundException("Такой вещи не существует"));
         Item item = ItemMapper.toItem(itemDto);
-        return itemDao.updateItem(item, itemId);
+        return ItemMapper.toItemDto(itemDao.updateItem(item, itemId));
     }
 
     @Override
-    public List<Item> getAllItemsByUserId(long userId) {
-        return itemDao.getAllItemsByUserId(userId);
+    public List<ItemDto> getAllItemsByUserId(long userId) {
+        return itemDao.getAllItemsByUserId(userId).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Item> searchItemsByText(String text) {
-        return itemDao.searchItemsByText(text);
+    public List<ItemDto> searchItemsByText(String text) {
+        return itemDao.searchItemsByText(text).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 }

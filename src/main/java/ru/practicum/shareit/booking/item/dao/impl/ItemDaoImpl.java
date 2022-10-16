@@ -1,13 +1,14 @@
-package ru.practicum.shareit.item.dao.impl;
+package ru.practicum.shareit.booking.item.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.dao.ItemDao;
-import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.booking.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.booking.item.dao.ItemDao;
+import ru.practicum.shareit.booking.item.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -63,13 +64,9 @@ public class ItemDaoImpl implements ItemDao {
 
     @Override
     public List<Item> getAllItemsByUserId(long userId) {
-        List<Item> itemList = new ArrayList<>();
-        for (Item item : items) {
-            if (item.getOwner() == userId) {
-                itemList.add(item);
-            }
-        }
-        return itemList;
+        return items.stream()
+                .filter(item -> item.getOwner() == userId)
+                .collect(Collectors.toList());
     }
 
     @Override

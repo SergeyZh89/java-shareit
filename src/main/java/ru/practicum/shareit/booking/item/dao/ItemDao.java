@@ -1,10 +1,11 @@
-package ru.practicum.shareit.item.dao;
+package ru.practicum.shareit.booking.item.dao;
 
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.booking.item.model.Item;
 
 import java.util.List;
 
 public interface ItemDao {
+
     Item getItemById(long itemId);
 
     Item addItemByUserId(Item item, long userId);

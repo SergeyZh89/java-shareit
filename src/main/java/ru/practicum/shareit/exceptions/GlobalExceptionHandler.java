@@ -1,29 +1,50 @@
 package ru.practicum.shareit.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.booking.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.user.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler({ItemNotFoundException.class, UserNotFoundException.class})
-    public void handleNotFound(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.NOT_FOUND.value());
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleItemNotFoundException(final ItemNotFoundException e) {
+        log.info("перехвачено исключение: " + e.getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler({EmailAlreadyExistsException.class})
-    public void handleBadRequest(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.CONFLICT.value());
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
+        log.info("перехвачено исключение: " + e.getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler({ValidatorExceptions.class})
-    public void handleBadValidator(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value());
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleEmailAlreadyExistsException(final EmailAlreadyExistsException e) {
+        log.info("перехвачено исключение: " + e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidatorExceptions(final ValidatorExceptions e) {
+        log.info("перехвачено исключение: " + e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus
+    public ErrorResponse handleThrowableExceptions(final Throwable e) {
+        log.info("перехвачено исключение: " + e.getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 }

@@ -5,6 +5,7 @@ import ru.practicum.shareit.user.User;
 import java.util.List;
 
 public interface UserDao {
+
     User addUser(User user);
 
     List<User> getAllUsers();

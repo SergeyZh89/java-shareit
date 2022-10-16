@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserDao;
+import ru.practicum.shareit.user.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 
 import java.util.ArrayList;
@@ -23,6 +24,11 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User addUser(User user) {
+        boolean emailExists = userList.stream()
+                .anyMatch(userFound -> userFound.getEmail().equals(user.getEmail()));
+        if (emailExists) {
+            throw new EmailAlreadyExistsException("Пользователь с такой почтой уже существует");
+        }
         user.setId(getGeneratedId());
         userList.add(user);
         return user;
