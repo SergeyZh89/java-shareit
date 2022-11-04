@@ -4,7 +4,9 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -22,9 +24,10 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@PathVariable long itemId) {
-        log.info("Получен запрос на вещь под номером: " + itemId);
-        return itemService.getItemById(itemId);
+    public ItemBookingDto getItem(@RequestHeader("X-Sharer-User-id") long userId,
+                                  @PathVariable long itemId) {
+        log.info("Получен запрос на вещь под номером: " + itemId + " пользователя: " + userId);
+        return itemService.getItemByIdAndUserId(userId, itemId);
     }
 
     @GetMapping("/search")
@@ -35,7 +38,7 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-id") long userId) {
-        log.info("Получен запрос на вещи под номером: " + userId);
+        log.info("Получен запрос на вещи пользователя под номером: " + userId);
         return itemService.getAllItemsByUserId(userId);
     }
 
@@ -44,6 +47,14 @@ public class ItemController {
                            @RequestBody ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи от пользователя: " + userId);
         return itemService.addItemByUserId(itemDto, userId);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ItemDto addComment(@RequestHeader("X-Sharer-User-id") long userId,
+                              @PathVariable long itemId,
+                              @RequestBody Comment comment) {
+        log.info("Получен запрос на добавление комментария от: " + userId);
+        return itemService.addComment(userId, itemId, comment);
     }
 
     @PatchMapping("/{itemId}")

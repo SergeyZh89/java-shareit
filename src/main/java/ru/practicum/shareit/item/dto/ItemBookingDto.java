@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemDto {
+public class ItemBookingDto {
     private long id;
     private long owner;
     private String name;
@@ -23,13 +23,13 @@ public class ItemDto {
     private BookingShortDto nextBooking;
     private List<Comment> comments;
 
-    public ItemDto(long id, String name,
-                   String description,
-                   Boolean available,
-                   long request,
-                   BookingShortDto lastBooking,
-                   BookingShortDto nextBooking,
-                   List<Comment> comments) {
+    public ItemBookingDto(long id, String name,
+                          String description,
+                          Boolean available,
+                          long request,
+                          BookingShortDto lastBooking,
+                          BookingShortDto nextBooking,
+                          List<Comment> comments) {
         this.id = id;
         this.name = name;
         this.description = description;
