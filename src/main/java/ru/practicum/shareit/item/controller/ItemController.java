@@ -1,11 +1,10 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.controller;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -24,7 +23,7 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemBookingDto getItem(@RequestHeader("X-Sharer-User-id") long userId,
+    public ItemDto getItem(@RequestHeader("X-Sharer-User-id") long userId,
                                   @PathVariable long itemId) {
         log.info("Получен запрос на вещь под номером: " + itemId + " пользователя: " + userId);
         return itemService.getItemByIdAndUserId(userId, itemId);

@@ -1,18 +1,16 @@
 package ru.practicum.shareit.item.service.impl;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.status.Status;
 import ru.practicum.shareit.exceptions.ValidatorExceptions;
-import ru.practicum.shareit.item.CommentMapper;
-import ru.practicum.shareit.item.CommentRepository;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
@@ -35,10 +33,10 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
 
-    public ItemServiceImpl(@Lazy ItemRepository itemRepository,
-                           @Lazy UserRepository userRepository,
-                           @Lazy BookingRepository bookingRepository,
-                           @Lazy CommentRepository commentRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository,
+                           UserRepository userRepository,
+                           BookingRepository bookingRepository,
+                           CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
@@ -77,12 +75,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemBookingDto getItemByIdAndUserId(long userId, long itemId) {
+    public ItemDto getItemByIdAndUserId(long userId, long itemId) {
         List<Booking> bookingslist = bookingRepository.findByItem_IdAndItem_Owner(itemId, userId);
         List<CommentDto> commentDtoList = commentRepository.findByItemId(itemId).stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList());
-        ItemBookingDto itemBookingDto = ItemMapper.toItemBookingDto(itemRepository.findById(itemId)
+        ItemDto itemDto = ItemMapper.toItemDto(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Такой вещи не существует")));
         if (!bookingslist.isEmpty()) {
             Booking nextBooking = bookingslist.stream().filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
@@ -90,15 +88,15 @@ public class ItemServiceImpl implements ItemService {
             Booking lastBooking = bookingslist.stream().filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
                     .max((Comparator.comparing(Booking::getEnd))).orElse(null);
             if (nextBooking != null) {
-                itemBookingDto.setNextBooking(BookingMapper.toBookingShortDto(nextBooking));
+                itemDto.setNextBooking(BookingMapper.toBookingShortDto(nextBooking));
             }
             if (lastBooking != null) {
-                itemBookingDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking));
+                itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking));
             }
         }
-        itemBookingDto.setOwner(userId);
-        itemBookingDto.setComments(commentDtoList);
-        return itemBookingDto;
+        itemDto.setOwner(userId);
+        itemDto.setComments(commentDtoList);
+        return itemDto;
     }
 
     @Override
@@ -185,16 +183,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItemsByText(String text) {
-        List<Item> itemList = new ArrayList<>();
-        for (Item item : itemRepository.findAll()) {
-            String name = item.getName().toLowerCase();
-            String description = item.getDescription().toLowerCase();
-            if ((name.contains(text.toLowerCase()) || description.contains(text.toLowerCase()))
-                    && item.getAvailable() && !text.isBlank()) {
-                itemList.add(item);
-            }
+        List<ItemDto> itemDtoList = new ArrayList<>();
+        if (!text.isBlank()) {
+            itemDtoList = itemRepository.searchAllByText(text).stream()
+                    .map(ItemMapper::toItemDto)
+                    .collect(Collectors.toList());
         }
-        return itemList.stream().map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+        return itemDtoList;
     }
 }
