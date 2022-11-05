@@ -26,7 +26,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto getItem(@RequestHeader("X-Sharer-User-id") long userId,
-                                  @PathVariable long itemId) {
+                           @PathVariable long itemId) {
         log.info("Получен запрос на вещь под номером: " + itemId + " пользователя: " + userId);
         return itemService.getItemByIdAndUserId(userId, itemId);
     }
@@ -44,7 +44,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem (@RequestHeader(value = "X-Sharer-User-id") long userId,
+    public ItemDto addItem(@RequestHeader(value = "X-Sharer-User-id") long userId,
                            @RequestBody ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи от пользователя: " + userId);
         return itemService.addItemByUserId(itemDto, userId);
