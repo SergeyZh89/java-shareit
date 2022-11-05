@@ -45,6 +45,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
+        if (userId == 0) {
+            throw new ValidatorExceptions("Неверный запрос");
+        }
         ItemDto itemDto = itemRepository.findById(itemId)
                 .map(ItemMapper::toItemDto)
                 .orElseThrow(() -> new ItemNotFoundException("Такая вещь не найдена"));

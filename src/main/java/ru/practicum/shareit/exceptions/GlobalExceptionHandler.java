@@ -49,10 +49,10 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler
-    @ResponseStatus
-    public ErrorResponse handleThrowableExceptions(final Throwable e) {
-        log.info("перехвачено исключение: " + e.getMessage());
-        return new ErrorResponse(e.getMessage());
-    }
+//    @ExceptionHandler
+//    @ResponseStatus
+//    public ErrorResponse handleThrowableExceptions(final Throwable e) {
+//        log.info("перехвачено исключение: " + e.getMessage());
+//        return new ErrorResponse(e.getMessage());
+//    }
 }
