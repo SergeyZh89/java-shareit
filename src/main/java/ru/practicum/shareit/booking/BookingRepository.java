@@ -19,6 +19,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBooker_Id(long bookingId);
 
+    @Query(value = "SELECT * FROM bookings AS b JOIN items i on i.id = b.item_id " +
+            "WHERE i.owner_id = ?1 AND (?2 between start_date and end_date)", nativeQuery = true)
+    List<Booking> findAllByItem_OwnerAndStatusCurrent(long ownerId, LocalDateTime localDateTime);
+
+    @Query(value = "SELECT * FROM bookings AS b JOIN items i on i.id = b.item_id " +
+            "WHERE b.booker_id= ?1 AND (?2 between start_date and end_date)", nativeQuery = true)
+    List<Booking> findAllByBooker_IdAndStatusCurrent(long ownerId, LocalDateTime localDateTime);
+
     List<Booking> findAllByBooker_IdOrderByStartDesc(long userid);
 
     List<Booking> findAllByItem_OwnerOrderByStartDesc(long userid);

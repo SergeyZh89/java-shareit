@@ -7,9 +7,11 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.status.Status;
 import ru.practicum.shareit.exceptions.ValidatorExceptions;
+import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
@@ -45,23 +47,28 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto addComment(long userId, long itemId, Comment comment) {
+    public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
         ItemDto itemDto = itemRepository.findById(itemId)
                 .map(ItemMapper::toItemDto)
                 .orElseThrow(()-> new ItemNotFoundException("Такая вещь не найдена"));
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException("Такой пользователь не найден"));
-        if (comment.getText().isEmpty()) {
+        if (commentDto.getText().isEmpty()) {
             throw new ValidatorExceptions("Нельзя оставлять поле комментария пустым");
         }
         if (bookingRepository.findByBooker_Id(userId).stream()
-                .anyMatch(booking -> booking.getItem().getId() == itemDto.getId() && !booking.getStatus().equals(Status.REJECTED))) {
-            itemDto.getComments().add(comment);
-            commentRepository.save(comment);
+                .anyMatch(booking -> booking.getItem().getId() == itemDto.getId()
+                        && !booking.getStatus().equals(Status.REJECTED)
+                        && booking.getEnd().isBefore(LocalDateTime.now()))) {
+            commentDto.setCreated(LocalDateTime.now());
+            commentDto.setAuthorName(user.getName());
+            commentDto.setAuthorId(userId);
+            commentDto.setItemId(itemId);
+            itemDto.getComments().add(commentDto);
         } else {
             throw new ValidatorExceptions("У пользователя нет брони");
         }
-        return itemDto;
+        return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto)));
     }
 
     @Override
@@ -73,6 +80,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemBookingDto getItemByIdAndUserId(long userId, long itemId) {
         List<Booking> bookingslist = bookingRepository.findByItem_IdAndItem_Owner(itemId, userId);
+        List<CommentDto> commentDtoList = commentRepository.findByItemId(itemId).stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
         ItemBookingDto itemBookingDto = ItemMapper.toItemBookingDto(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Такой вещи не существует")));
         if (!bookingslist.isEmpty()) {
@@ -88,6 +98,7 @@ public class ItemServiceImpl implements ItemService {
             }
         }
         itemBookingDto.setOwner(userId);
+        itemBookingDto.setComments(commentDtoList);
         return itemBookingDto;
     }
 

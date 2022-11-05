@@ -100,7 +100,7 @@ public class BookingServiceImpl implements BookingService {
                     .collect(Collectors.toList());
         }
         if (state.equals(CURRENT.toString())) {
-            return bookingRepository.findAllByBooker_IdAndByStatus(userId, CURRENT.toString()).stream()
+            return bookingRepository.findAllByBooker_IdAndStatusCurrent(userId, LocalDateTime.now()).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
         }
@@ -145,9 +145,12 @@ public class BookingServiceImpl implements BookingService {
             return bookingRepository.findAllByItem_OwnerAndEndIsBeforeOrderByIdDesc(ownerId, LocalDateTime.now()).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
-        }
-        else if (state.equals(WAITING.toString())) {
+        } else if (state.equals(WAITING.toString())) {
             return bookingRepository.findAllByOwner_IdAndByStatus(ownerId, WAITING.toString()).stream()
+                    .map(BookingMapper::toBookingDto)
+                    .collect(Collectors.toList());
+        } else if (state.equals(CURRENT.toString())) {
+            return bookingRepository.findAllByItem_OwnerAndStatusCurrent(ownerId, LocalDateTime.now()).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
         } else if (state.equals(REJECTED.toString())) {

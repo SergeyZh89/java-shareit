@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -21,4 +22,8 @@ public class Comment {
     private long itemId;
     @Column(name = "author_id")
     private long authorId;
+    @Column(name = "author_name")
+    private String authorName;
+    @Column(name = "created")
+    private LocalDateTime created;
 }
