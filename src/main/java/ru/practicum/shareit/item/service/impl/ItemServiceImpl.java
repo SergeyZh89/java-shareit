@@ -15,7 +15,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.UserRepository;
@@ -50,9 +49,9 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
         ItemDto itemDto = itemRepository.findById(itemId)
                 .map(ItemMapper::toItemDto)
-                .orElseThrow(()-> new ItemNotFoundException("Такая вещь не найдена"));
+                .orElseThrow(() -> new ItemNotFoundException("Такая вещь не найдена"));
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException("Такой пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Такой пользователь не найден"));
         if (commentDto.getText().isEmpty()) {
             throw new ValidatorExceptions("Нельзя оставлять поле комментария пустым");
         }

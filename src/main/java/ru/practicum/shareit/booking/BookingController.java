@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Validated
@@ -26,28 +25,30 @@ public class BookingController {
 
     @PostMapping
     public BookingDto addNewBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                     @RequestBody BookingDto bookingDto) {
+                                    @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос на добавление брони от пользователя: " + userId);
         return bookingService.addNewBooking(userId, bookingDto);
     }
 
     @GetMapping("/{bookingId}")
     public BookingDto findByBookingIdAndUserId(@PathVariable long bookingId,
-                                                     @RequestHeader("X-Sharer-User-Id") long userId) {
+                                               @RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("Получен запрос на поиск брони по номеру: " + bookingId + " пользователя по номеру: " + userId);
         return bookingService.findByBookingIdAndUserId(bookingId, userId);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> findAllBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
-                                                   @RequestParam(required = false, defaultValue = "ALL") String state) {
+                                                   @RequestParam(required = false, defaultValue = "ALL")
+                                                   String state) {
         log.info("Получен запрос на поиск брони по бронирующему: " + ownerId + " в статусе: " + state);
         return bookingService.findAllBookingsByOwner(ownerId, state);
     }
 
     @GetMapping
     public List<BookingDto> findBookingsByUserIdByState(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                        @RequestParam(required = false, defaultValue = "ALL") String state) {
+                                                        @RequestParam(required = false, defaultValue = "ALL")
+                                                        String state) {
         log.info("Получен запрос на поиск брони по владельцу: " + userId + " в статусе: " + state);
         return bookingService.findBookingsByUserByState(userId, state);
     }

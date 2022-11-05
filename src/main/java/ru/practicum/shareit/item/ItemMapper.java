@@ -3,11 +3,9 @@ package ru.practicum.shareit.item;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ItemMapper {
 
