@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user.service.impl;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ValidatorExceptions;
 import ru.practicum.shareit.user.UserMapper;

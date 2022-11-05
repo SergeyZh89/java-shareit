@@ -9,7 +9,7 @@ public interface BookingService {
 
     BookingDto findByBookingIdAndUserId(long bookingId, long userId);
 
-    BookingDto setApprove (long bookingId, long userId, boolean isApproved);
+    BookingDto setApprove(long bookingId, long userId, boolean isApproved);
 
     List<BookingDto> findBookingsByUserByState(long userId, String state);
 
