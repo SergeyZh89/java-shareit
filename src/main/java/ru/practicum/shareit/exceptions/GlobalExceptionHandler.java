@@ -11,9 +11,6 @@ import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.user.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 
-import javax.validation.ConstraintViolationException;
-import javax.xml.bind.ValidationException;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
