@@ -58,7 +58,7 @@ public class ItemDto {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ItemComments{
+    public static class ItemComments {
         private long id;
 
         private String text;
