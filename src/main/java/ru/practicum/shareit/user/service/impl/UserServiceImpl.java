@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ValidatorExceptions;
 import ru.practicum.shareit.user.UserMapper;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -29,9 +31,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(long userId) {
-        if (userId <= 0) {
-            throw new UserNotFoundException("Такого пользователя не существует");
-        }
         return UserMapper.toUserDto(userRepository
                 .findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует")));
@@ -50,9 +49,6 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto, long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует"));
-        if (userId <= 0) {
-            throw new UserNotFoundException("Такого пользователя не существует");
-        }
         User userNew = UserMapper.toUser(userDto);
         userNew.setId(userId);
         if (userNew.getName() != null) {

@@ -1,19 +1,18 @@
 package ru.practicum.shareit.item.service.impl;
 
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
-import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.status.Status;
 import ru.practicum.shareit.exceptions.ValidatorExceptions;
-import ru.practicum.shareit.item.mapper.CommentMapper;
-import ru.practicum.shareit.item.repository.CommentRepository;
-import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
@@ -64,7 +63,12 @@ public class ItemServiceImpl implements ItemService {
             commentDto.setAuthorName(user.getName());
             commentDto.setAuthorId(userId);
             commentDto.setItemId(itemId);
-            itemDto.getComments().add(commentDto);
+            ItemDto.ItemComments itemComments = new ItemDto.ItemComments();
+            itemComments.setCreated(LocalDateTime.now());
+            itemComments.setAuthorName(user.getName());
+            itemComments.setAuthorId(userId);
+            itemComments.setItemId(itemId);
+            itemDto.getComments().add(itemComments);
         } else {
             throw new ValidatorExceptions("У пользователя нет брони");
         }
@@ -80,8 +84,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItemByIdAndUserId(long userId, long itemId) {
         List<Booking> bookingslist = bookingRepository.findByItem_IdAndItem_Owner(itemId, userId);
-        List<CommentDto> commentDtoList = commentRepository.findByItemId(itemId).stream()
-                .map(CommentMapper::toCommentDto)
+        List<ItemDto.ItemComments> itemCommentsList = commentRepository.findByItemId(itemId).stream()
+                .map(CommentMapper::toItemComment)
                 .collect(Collectors.toList());
         ItemDto itemDto = ItemMapper.toItemDto(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Такой вещи не существует")));
@@ -91,14 +95,14 @@ public class ItemServiceImpl implements ItemService {
             Booking lastBooking = bookingslist.stream().filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
                     .max((Comparator.comparing(Booking::getEnd))).orElse(null);
             if (nextBooking != null) {
-                itemDto.setNextBooking(BookingMapper.toBookingShortDto(nextBooking));
+                itemDto.setNextBooking(new ItemDto.ItemBooking(nextBooking.getId(), nextBooking.getBooker().getId()));
             }
             if (lastBooking != null) {
-                itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking));
+                itemDto.setLastBooking(new ItemDto.ItemBooking(lastBooking.getId(), lastBooking.getBooker().getId()));
             }
         }
         itemDto.setOwner(userId);
-        itemDto.setComments(commentDtoList);
+        itemDto.setComments(itemCommentsList);
         return itemDto;
     }
 
@@ -116,14 +120,10 @@ public class ItemServiceImpl implements ItemService {
             Booking lastBooking = bookingList.stream().filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
                     .max((Comparator.comparing(Booking::getEnd))).orElse(null);
             if (nextBooking != null) {
-                itemDto.setNextBooking(BookingMapper.toBookingShortDto(nextBooking));
-            } else {
-                itemDto.setNextBooking(null);
+                itemDto.setNextBooking(new ItemDto.ItemBooking(nextBooking.getId(), nextBooking.getBooker().getId()));
             }
             if (lastBooking != null) {
-                itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking));
-            } else {
-                itemDto.setLastBooking(null);
+                itemDto.setLastBooking(new ItemDto.ItemBooking(lastBooking.getId(), lastBooking.getBooker().getId()));
             }
         }
         return itemDtoList;

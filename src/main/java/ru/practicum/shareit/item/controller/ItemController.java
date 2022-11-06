@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.controller;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -15,7 +14,6 @@ import java.util.List;
 @RequestMapping("/items")
 @NoArgsConstructor
 @Slf4j
-@Validated
 public class ItemController {
     private ItemService itemService;
 
@@ -44,7 +42,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader(value = "X-Sharer-User-id") long userId,
+    public ItemDto addItem(@RequestHeader("X-Sharer-User-id") long userId,
                            @RequestBody ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи от пользователя: " + userId);
         return itemService.addItemByUserId(itemDto, userId);
