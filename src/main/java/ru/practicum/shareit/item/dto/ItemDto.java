@@ -23,11 +23,11 @@ public class ItemDto {
 
     private Long request;
 
-    private ItemDto.ItemBooking lastBooking;
+    private ItemBooking lastBooking;
 
-    private ItemDto.ItemBooking nextBooking;
+    private ItemBooking nextBooking;
 
-    private List<ItemDto.ItemComments> comments;
+    private List<ItemComments> comments;
 
     public ItemDto(long id, String name,
                    String description,
@@ -47,12 +47,10 @@ public class ItemDto {
     }
 
     @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class ItemBooking {
-        private long id;
+        private final long id;
 
-        private long bookerId;
+        private final long bookerId;
     }
 
     @Data

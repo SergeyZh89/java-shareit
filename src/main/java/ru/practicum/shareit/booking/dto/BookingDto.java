@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.status.Status;
 
 import javax.validation.constraints.Future;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Validated
 public class BookingDto {
     private long id;
 
@@ -25,25 +23,21 @@ public class BookingDto {
 
     private long itemId;
 
-    private BookingDto.Item item;
+    private Item item;
 
-    private BookingDto.User booker;
+    private User booker;
 
     private Status status;
 
     @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class Item {
-        private long id;
+        private final long id;
 
-        private String name;
+        private final String name;
     }
 
     @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class User {
-        private long id;
+        private final long id;
     }
 }
