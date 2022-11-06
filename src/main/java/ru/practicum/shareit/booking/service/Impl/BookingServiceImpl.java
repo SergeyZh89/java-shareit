@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -21,7 +20,6 @@ import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +30,6 @@ import java.util.stream.Collectors;
 import static ru.practicum.shareit.booking.state.State.REJECTED;
 import static ru.practicum.shareit.booking.state.State.WAITING;
 
-@Validated
 @Service
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
@@ -49,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto addNewBooking(long userId, @Valid BookingDto bookingDto) {
+    public BookingDto addNewBooking(long userId, BookingDto bookingDto) {
         if (!itemService.getItemById(bookingDto.getItemId()).getAvailable()) {
             throw new ValidatorExceptions("Данная вещь недоступна");
         }
@@ -59,12 +56,6 @@ public class BookingServiceImpl implements BookingService {
         }
         if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
             throw new ValidatorExceptions("Время начала бронирования раньше времени окончания бронирования");
-        }
-        if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
-            throw new ValidatorExceptions("Время начала бронирования в прошлом");
-        }
-        if (bookingDto.getEnd().isBefore(LocalDateTime.now())) {
-            throw new ValidatorExceptions("Время окончания бронирования в прошлом");
         }
         Item item = ItemMapper.toItem(itemService.getItemById(bookingDto.getItemId()));
         item.setOwner(userId);

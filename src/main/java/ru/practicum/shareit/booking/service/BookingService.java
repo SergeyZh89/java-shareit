@@ -1,14 +1,11 @@
 package ru.practicum.shareit.booking.service;
 
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
-@Validated
 public interface BookingService {
-    BookingDto addNewBooking(long userId, @Valid BookingDto bookingDto);
+    BookingDto addNewBooking(long userId, BookingDto bookingDto);
 
     BookingDto findByBookingIdAndUserId(long bookingId, long userId);
 

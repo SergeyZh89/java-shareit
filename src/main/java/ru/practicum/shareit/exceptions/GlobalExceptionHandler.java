@@ -2,6 +2,7 @@ package ru.practicum.shareit.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,6 +10,9 @@ import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.user.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
+
+import javax.validation.ConstraintViolationException;
+import javax.xml.bind.ValidationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -45,6 +49,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidatorExceptions(final ValidatorExceptions e) {
+        log.info("перехвачено исключение: " + e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
         log.info("перехвачено исключение: " + e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
