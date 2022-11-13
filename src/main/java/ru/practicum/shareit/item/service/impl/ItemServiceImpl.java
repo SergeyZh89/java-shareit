@@ -130,7 +130,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto addItemByUserId(ItemDto itemDto, long userId) {
+    public ItemDto addItemByUserId(ItemDto itemDto, long userId, long requestId) {
         if (userId <= 0) {
             throw new UserNotFoundException("Такого пользователя не существует");
         } else {
@@ -147,6 +147,9 @@ public class ItemServiceImpl implements ItemService {
         }
         if (itemDto.getDescription() == null) {
             throw new ValidatorExceptions("Неверные данные");
+        }
+        if (requestId != 0) {
+            itemDto.setRequest(requestId);
         }
         itemDto.setOwner(userId);
         Item item = ItemMapper.toItem(itemDto);

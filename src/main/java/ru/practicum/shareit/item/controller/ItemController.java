@@ -43,9 +43,10 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@RequestHeader("X-Sharer-User-id") long userId,
-                           @RequestBody ItemDto itemDto) {
+                           @RequestBody ItemDto itemDto,
+                           @RequestParam(required = false, defaultValue = "0") long requestId) {
         log.info("Получен запрос на добавление вещи от пользователя: " + userId);
-        return itemService.addItemByUserId(itemDto, userId);
+        return itemService.addItemByUserId(itemDto, userId, requestId);
     }
 
     @PostMapping("/{itemId}/comment")
