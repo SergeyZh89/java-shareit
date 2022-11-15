@@ -29,7 +29,7 @@ public class Item {
     @Column(name = "is_available")
     private Boolean available;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "request_id", referencedColumnName = "id")
     private ItemRequest request;
 

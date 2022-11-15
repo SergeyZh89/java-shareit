@@ -21,7 +21,7 @@ public class ItemDto {
 
     private Boolean available;
 
-    private long request;
+    private long requestId;
 
     private ItemBooking lastBooking;
 
@@ -32,7 +32,7 @@ public class ItemDto {
     public ItemDto(long id, String name,
                    String description,
                    Boolean available,
-                   long request,
+                   long requestId,
                    ItemDto.ItemBooking lastBooking,
                    ItemDto.ItemBooking nextBooking,
                    List<ItemDto.ItemComments> comments) {
@@ -40,7 +40,7 @@ public class ItemDto {
         this.name = name;
         this.description = description;
         this.available = available;
-        this.request = request;
+        this.requestId = requestId;
         this.lastBooking = lastBooking;
         this.nextBooking = nextBooking;
         this.comments = comments;

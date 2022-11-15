@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,10 +14,24 @@ import java.time.LocalDateTime;
 public class ItemRequestDto {
     private long id;
 
-    @NotNull (message = "Нужно ввести описание")
+    @NotNull(message = "Нужно ввести описание")
     private String description;
 
     private long requestorId;
 
     private LocalDateTime created;
+
+    private List<ItemsRequest> items;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ItemsRequest {
+        private long id;
+        private long owner;
+        private String name;
+        private String description;
+        private boolean available;
+        private long requestId;
+    }
 }

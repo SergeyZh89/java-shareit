@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
@@ -30,16 +32,19 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
-
+    @Autowired
     public ItemServiceImpl(ItemRepository itemRepository,
                            UserRepository userRepository,
                            BookingRepository bookingRepository,
-                           CommentRepository commentRepository) {
+                           CommentRepository commentRepository,
+                           ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     @Override
@@ -130,7 +135,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto addItemByUserId(ItemDto itemDto, long userId, long requestId) {
+    public ItemDto addItemByUserId(ItemDto itemDto, long userId) {
         if (userId <= 0) {
             throw new UserNotFoundException("Такого пользователя не существует");
         } else {
@@ -148,12 +153,14 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getDescription() == null) {
             throw new ValidatorExceptions("Неверные данные");
         }
-        if (requestId != 0) {
-            itemDto.setRequest(requestId);
-        }
         itemDto.setOwner(userId);
         Item item = ItemMapper.toItem(itemDto);
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        if (itemDto.getRequestId() != 0) {
+            item.setRequest(itemRequestRepository.findById(itemDto.getRequestId()).get());
+        }
+        itemRepository.save(item);
+        itemDto.setId(item.getId());
+        return itemDto;
     }
 
     @Override
