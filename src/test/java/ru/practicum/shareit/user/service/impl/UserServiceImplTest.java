@@ -1,0 +1,72 @@
+package ru.practicum.shareit.user.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.service.UserService;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+
+@Transactional
+@SpringBootTest(
+        properties = "db.name=test",
+        webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+class UserServiceImplTest {
+
+//    private final TestEntityManager em;
+    private final EntityManager em;
+    private final UserService service;
+
+    @Test
+    void getUsers() {
+
+    }
+
+    @Test
+    void getUser() {
+    }
+
+    @Test
+    void addUser() {
+        UserDto userDto = makeUserDto(1, "Petr", "user@email.ru");
+        service.addUser(userDto);
+        TypedQuery<User> query = em.createQuery("Select u from User u where u.email = :email", User.class);
+        User user = query
+                .setParameter("email", userDto.getEmail())
+                .getSingleResult();
+
+        assertThat(user.getId(), notNullValue());
+        assertThat(user.getName(), equalTo(userDto.getName()));
+        assertThat(user.getEmail(), equalTo(userDto.getEmail()));
+    }
+
+    @Test
+    void updateUser() {
+    }
+
+    @Test
+    void deleteUser() {
+    }
+
+    private UserDto makeUserDto(long id , String name, String email) {
+        UserDto dto = new UserDto();
+        dto.setId(id);
+        dto.setName(name);
+        dto.setEmail(email);
+        return dto;
+    }
+}
