@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 public class ItemDto {
     private long id;
 
@@ -29,28 +32,13 @@ public class ItemDto {
 
     private List<ItemComments> comments;
 
-    public ItemDto(long id, String name,
-                   String description,
-                   Boolean available,
-                   long requestId,
-                   ItemDto.ItemBooking lastBooking,
-                   ItemDto.ItemBooking nextBooking,
-                   List<ItemDto.ItemComments> comments) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.available = available;
-        this.requestId = requestId;
-        this.lastBooking = lastBooking;
-        this.nextBooking = nextBooking;
-        this.comments = comments;
-    }
-
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ItemBooking {
-        private final long id;
+        private long id;
 
-        private final long bookerId;
+        private long bookerId;
     }
 
     @Data
@@ -67,6 +55,7 @@ public class ItemDto {
 
         private String authorName;
 
+        @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
         private LocalDateTime created;
     }
 }

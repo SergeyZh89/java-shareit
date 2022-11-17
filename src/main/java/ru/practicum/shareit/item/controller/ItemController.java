@@ -43,8 +43,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@RequestHeader("X-Sharer-User-id") long userId,
-                           @RequestBody ItemDto itemDto,
-                           @RequestParam(required = false, defaultValue = "0") long requestId) {
+                           @RequestBody ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи от пользователя: " + userId);
         return itemService.addItemByUserId(itemDto, userId);
     }
@@ -53,7 +52,7 @@ public class ItemController {
     public CommentDto addComment(@RequestHeader("X-Sharer-User-id") long userId,
                                  @PathVariable long itemId,
                                  @RequestBody CommentDto commentDto) {
-        log.info("Получен запрос на добавление комментария от: " + userId);
+        log.info("Получен запрос на добавление комментария: " + itemId + " от: " + userId);
         return itemService.addComment(userId, itemId, commentDto);
     }
 

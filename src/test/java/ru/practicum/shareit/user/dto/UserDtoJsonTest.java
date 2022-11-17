@@ -11,6 +11,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
 class UserDtoJsonTest {
+
     @Autowired
     private JacksonTester<UserDto> json;
 

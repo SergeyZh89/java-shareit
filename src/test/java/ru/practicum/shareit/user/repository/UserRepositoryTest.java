@@ -25,7 +25,7 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User user = new User().toBuilder()
+    private final User user = new User().toBuilder()
             .name("Mike")
             .email("mike@mail.ru")
             .build();

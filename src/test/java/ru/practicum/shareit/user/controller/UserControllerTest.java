@@ -38,14 +38,14 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    private UserDto userDto = new UserDto().toBuilder()
+    private final UserDto userDto = new UserDto().toBuilder()
             .id(1L)
             .name("Mike")
             .email("mike@mail.ru")
             .build();
 
     @Test
-    void getUsers() throws Exception {
+    void testGetUsers() throws Exception {
         when(userService.getUsers())
                 .thenReturn(Arrays.asList(userDto, new UserDto()
                         .toBuilder()
@@ -68,7 +68,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUser() throws Exception {
+    void testGetUser() throws Exception {
         when(userService.getUser(anyLong()))
                 .thenReturn(userDto);
 
@@ -83,7 +83,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUser() throws Exception {
+    void testAddUser() throws Exception {
         when(userService.addUser(any()))
                 .thenReturn(userDto);
 
@@ -100,7 +100,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUserWithUserNotFoundException() throws Exception {
+    void testAddUserWithUserNotFoundException() throws Exception {
         when(userService.addUser(any()))
                 .thenThrow(new UserNotFoundException("Такого пользователя не существует"));
 
@@ -113,7 +113,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUserWithEmailExistException() throws Exception {
+    void testAddUserWithEmailExistException() throws Exception {
         when(userService.addUser(any()))
                 .thenThrow(new EmailAlreadyExistsException("Такой емайл уже существует"));
 
@@ -126,7 +126,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUserWithValidatorException() throws Exception {
+    void testAddUserWithValidatorException() throws Exception {
         when(userService.addUser(any()))
                 .thenThrow(new ValidatorExceptions("Неверные данные"));
 
@@ -141,7 +141,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUser() throws Exception {
+    void testUpdateUser() throws Exception {
         userDto.setName("Bob");
         userDto.setEmail("bob@mail.ru");
         when(userService.updateUser(userDto, 1))
@@ -160,7 +160,7 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUser() throws Exception {
+    void testDeleteUser() throws Exception {
         mockMvc.perform(delete("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
