@@ -75,10 +75,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getRequestsByUserWithPagination(long userId, Pageable pageable) {
+    public List<ItemRequestDto> getRequestsByOwnerWithPagination(long userId, Pageable pageable) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует"));
-        List<ItemRequestDto> list = itemRequestRepository.findAllByOwnerId(userId, pageable).stream()
+        List<ItemRequestDto> list = itemRequestRepository.findAllByOwner_Id(userId, pageable).stream()
                 .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
         for (ItemRequestDto itemRequestDto : list) {
             List<ItemRequestDto.ItemsRequest> itemList = itemRepository.findAllByRequest_Id(itemRequestDto.getId()).stream()

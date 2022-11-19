@@ -40,7 +40,7 @@ public class ItemRequestController {
         log.info("Получен запрос на получение всех реквестов пользователя: " + userId);
         int page = from / size;
         PageRequest request = PageRequest.of(page, size);
-        return itemRequestService.getRequestsByUserWithPagination(userId, request);
+        return itemRequestService.getRequestsByOwnerWithPagination(userId, request);
     }
 
     @GetMapping("/{requestId}")

@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 public class BookingDto {
     private long id;
 
-    @FutureOrPresent(message = "Время бронирования не должен быть в прошлом")
+    @FutureOrPresent(message = "Время старта бронирования не должно быть в прошлом")
     private LocalDateTime start;
 
-    @Future(message = "Время бронирования не должен быть в прошлом")
+    @Future(message = "Время окончания бронирования не должен быть в прошлом")
     private LocalDateTime end;
 
     private long itemId;

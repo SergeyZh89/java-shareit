@@ -1,6 +1,9 @@
 package ru.practicum.shareit.request.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +14,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
 public class ItemRequestDto {
     private long id;
 
@@ -26,6 +30,7 @@ public class ItemRequestDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder(toBuilder = true)
     public static class ItemsRequest {
         private long id;
         private long owner;

@@ -45,7 +45,7 @@ class UserRepositoryTest {
     @Test
     void verifyRepositorySaveAnUser() {
         Assertions.assertEquals(0, user.getId());
-        em.persist(user);
+        userRepository.save(user);
         Assertions.assertEquals(1, user.getId());
     }
 

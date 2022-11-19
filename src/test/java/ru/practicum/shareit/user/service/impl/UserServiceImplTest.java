@@ -27,11 +27,14 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 class UserServiceImplTest {
 
+    @Autowired
     private final EntityManager em;
+
+    @Autowired
     private final UserService service;
 
     @Test
-    void getUsers() {
+    void testGetUsers() {
         List<UserDto> sourceUsers = List.of(
                 makeUserDto("Ivan", "ivan@email"),
                 makeUserDto("Petr", "petr@email"),

@@ -1,5 +1,8 @@
 package ru.practicum.shareit.item.service.impl;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
@@ -11,6 +14,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -27,25 +31,32 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
-    private final BookingRepository bookingRepository;
-    private final CommentRepository commentRepository;
-    private final ItemRequestRepository itemRequestRepository;
-
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository,
-                           UserRepository userRepository,
-                           BookingRepository bookingRepository,
-                           CommentRepository commentRepository,
-                           ItemRequestRepository itemRequestRepository) {
-        this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
-        this.bookingRepository = bookingRepository;
-        this.commentRepository = commentRepository;
-        this.itemRequestRepository = itemRequestRepository;
-    }
+    private ItemRepository itemRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
+
+//    @Autowired
+//    public ItemServiceImpl(ItemRepository itemRepository,
+//                           UserRepository userRepository,
+//                           BookingRepository bookingRepository,
+//                           CommentRepository commentRepository,
+//                           ItemRequestRepository itemRequestRepository) {
+//        this.itemRepository = itemRepository;
+//        this.userRepository = userRepository;
+//        this.bookingRepository = bookingRepository;
+//        this.commentRepository = commentRepository;
+//        this.itemRequestRepository = itemRequestRepository;
+//    }
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
@@ -77,7 +88,10 @@ public class ItemServiceImpl implements ItemService {
         } else {
             throw new ValidatorExceptions("У пользователя нет брони");
         }
-        return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto)));
+        Comment comment = commentRepository.save(CommentMapper.toComment(commentDto));
+        commentDto.setId(comment.getId());
+//        return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto)));
+        return commentDto;
     }
 
     @Override
