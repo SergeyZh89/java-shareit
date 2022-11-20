@@ -13,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.status.Status;
+import ru.practicum.shareit.exceptions.ValidatorExceptions;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.mapper.CommentMapper;
@@ -70,6 +71,7 @@ class ItemServiceImplTest {
     private BookingRepository bookingRepository;
 
     private User user = new User().toBuilder()
+            .id(1L)
             .name("Mike")
             .email("mike@mail.ru")
             .build();
@@ -89,14 +91,15 @@ class ItemServiceImplTest {
             .build();
 
     private Comment comment = new Comment().toBuilder()
-            .id(1L).text("text")
+            .id(1L)
+            .text("text")
             .itemId(1L)
             .authorId(1L)
             .authorName("author")
             .created(LocalDateTime.now()).build();
 
     private Booking booking = new Booking().toBuilder()
-            .id(1)
+            .id(1L)
             .item(item)
             .booker(user)
             .status(Status.APPROVED)
@@ -107,24 +110,40 @@ class ItemServiceImplTest {
         booking.setStart(LocalDateTime.of(2000, 11, 11, 11, 11));
         booking.setEnd(LocalDateTime.of(2000, 11, 11, 11, 12));
 
-        lenient()
+        Mockito
                 .when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
-        lenient()
+        Mockito
                 .when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        lenient()
-                .when(bookingRepository.findByBooker_Id(anyLong()))
+        Mockito
+                .when(bookingRepository.findByBooker_Id(1L))
                 .thenReturn(List.of(booking));
-        lenient()
+        Mockito
                 .when(commentRepository.save(any(Comment.class)))
                 .thenReturn(comment);
 
+        Throwable throwableWithoutBookingUser = assertThrows(ValidatorExceptions.class,
+                () -> itemService.addComment(2L, 1L, CommentMapper.toCommentDto(comment)));
+        assertNotNull(throwableWithoutBookingUser.getMessage());
+
+        Throwable throwableUserId = assertThrows(ValidatorExceptions.class,
+                () -> itemService.addComment(0, 1L, CommentMapper.toCommentDto(comment)));
+        assertNotNull(throwableUserId.getMessage());
+
+        comment.setText("");
+
+        Throwable throwableText = assertThrows(ValidatorExceptions.class,
+                () -> itemService.addComment(1L, 1L, CommentMapper.toCommentDto(comment)));
+        assertNotNull(throwableText.getMessage());
+
+        comment.setText("text");
+
         itemService.addComment(1L, 1L, CommentMapper.toCommentDto(comment));
 
-        verify(itemRepository, times(1)).findById(anyLong());
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(bookingRepository, times(1)).findByBooker_Id(anyLong());
+        verify(itemRepository, times(3)).findById(anyLong());
+        verify(userRepository, times(3)).findById(anyLong());
+        verify(bookingRepository, times(2)).findByBooker_Id(anyLong());
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
@@ -182,8 +201,6 @@ class ItemServiceImplTest {
         item.setOwner(1L);
         List<Item> sourceList = List.of(item);
         List<ItemDto> sourceDtoList = sourceList.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
-        em.persist(user);
-        em.flush();
 
         Mockito
                 .when(itemRepository.findAll())
@@ -206,8 +223,6 @@ class ItemServiceImplTest {
     @Test
     void addItemByUserId() {
         List<User> userList = List.of(user);
-        em.persist(user);
-        em.flush();
 
         Mockito
                 .when(userRepository.findAll())

@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
-        if (userId == 0) {
+        if (userId <= 0) {
             throw new ValidatorExceptions("Неверный запрос");
         }
         ItemDto itemDto = itemRepository.findById(itemId)
