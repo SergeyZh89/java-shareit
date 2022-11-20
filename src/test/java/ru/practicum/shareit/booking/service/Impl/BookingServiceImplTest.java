@@ -11,15 +11,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.state.State;
 import ru.practicum.shareit.booking.status.Status;
+import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -29,6 +32,8 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -83,7 +88,7 @@ class BookingServiceImplTest {
             .build();
 
     @Test
-    void addNewBooking() {
+    void testAddNewBooking() {
         booking.setStart(LocalDateTime.of(2000, 11, 11, 11, 11));
         booking.setEnd(LocalDateTime.of(2000, 11, 11, 11, 12));
 
@@ -97,16 +102,44 @@ class BookingServiceImplTest {
 
         bookingService.addNewBooking(2L, BookingMapper.toBookingDto(booking));
 
+        Throwable throwableItem = assertThrows(ItemNotFoundException.class,
+                () -> bookingService.addNewBooking(1L, BookingMapper.toBookingDto(booking)));
+        assertNotNull(throwableItem.getMessage());
+
+        booking.setStart(LocalDateTime.of(2000, 11, 11, 11, 13));
+        Throwable throwableDate = assertThrows(ItemNotFoundException.class,
+                () -> bookingService.addNewBooking(1L, BookingMapper.toBookingDto(booking)));
+        assertNotNull(throwableDate.getMessage());
+
         verify(bookingRepository, times(1)).save(any(Booking.class));
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(itemRepository, times(2)).findById(anyLong());
+        verify(userRepository, times(3)).findById(anyLong());
+        verify(itemRepository, times(4)).findById(anyLong());
+    }
+
+    @Test
+    void testAddNewBookingWrondUser() {
+        Mockito.when(itemRepository.findById(anyLong()))
+                .thenReturn(Optional.ofNullable(item));
+
+        Throwable throwableDate = assertThrows(UserNotFoundException.class,
+                () -> bookingService.addNewBooking(1L, BookingMapper.toBookingDto(booking)));
+        assertNotNull(throwableDate.getMessage());
+
+        verify(itemRepository, times(1)).findById(anyLong());
     }
 
     @Test
     void findByBookingIdAndUserId() {
         Mockito
                 .when(bookingRepository.findByIdAndUserIdAndOwnerId(anyLong(), anyLong()))
-                .thenReturn(Optional.ofNullable(booking));
+                .thenAnswer(invocationOnMock -> {
+                    long bookingId = invocationOnMock.getArgument(0, Long.class);
+                    if (bookingId <= 0) {
+                        throw new BookingNotFoundException("Такого реквеста не существует");
+                    } else {
+                        return Optional.ofNullable(booking);
+                    }
+                });
 
         BookingDto targetBooking = bookingService.findByBookingIdAndUserId(1L, 1L);
 
@@ -114,6 +147,13 @@ class BookingServiceImplTest {
         assertThat(targetBooking.getItemId(), equalTo(booking.getItem().getId()));
         assertThat(targetBooking.getBooker().getId(), equalTo(booking.getBooker().getId()));
         assertThat(targetBooking.getItem().getName(), equalTo(booking.getItem().getName()));
+
+        Throwable throwable = assertThrows(BookingNotFoundException.class,
+                () -> bookingService.findByBookingIdAndUserId(0, 1L));
+
+        assertNotNull(throwable.getMessage());
+
+        verify(bookingRepository, times(2)).findByIdAndUserIdAndOwnerId(anyLong(), anyLong());
     }
 
     @Test

@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.exceptions.ItemRequestNotFoundException;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -22,6 +23,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @SpringBootTest(properties = "db.name=test",
@@ -77,6 +80,16 @@ class ItemRequestServiceImplTest {
         assertThat(targetItemRequest.getId(), notNullValue());
         assertThat(targetItemRequest.getRequestorId(), equalTo(1L));
         assertThat(targetItemRequest.getItems(), notNullValue());
+    }
+
+    @Test
+    void getWrongItemRequestByUser() {
+        userService.addUser(new UserDto().toBuilder().name("Roman").email("roman@mail.ru").build());
+        itemRequestService.addItemRequest(1, itemRequestDto);
+
+        Throwable throwable = assertThrows(ItemRequestNotFoundException.class,
+                () -> itemRequestService.getItemRequestByUser(1, 0));
+        assertNotNull(throwable.getMessage());
     }
 
     @Test
