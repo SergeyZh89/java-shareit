@@ -38,7 +38,7 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    private final UserDto userDto = new UserDto().toBuilder()
+    private UserDto userDto = new UserDto().toBuilder()
             .id(1L)
             .name("Mike")
             .email("mike@mail.ru")

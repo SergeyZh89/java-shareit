@@ -63,7 +63,8 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setBooker(user);
         booking.setItem(item);
-        return BookingMapper.toBookingDto(bookingRepository.save(booking));
+        Booking bookingSaved = bookingRepository.save(booking);
+        return BookingMapper.toBookingDto(bookingSaved);
     }
 
     @Override
@@ -84,7 +85,8 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-        return BookingMapper.toBookingDto(bookingRepository.save(booking));
+        bookingRepository.save(booking);
+        return BookingMapper.toBookingDto(booking);
     }
 
     @Override

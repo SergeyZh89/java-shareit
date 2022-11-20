@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -67,7 +68,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.lastBooking.id", is(itemDto.getLastBooking().getBookerId()), Long.class))
                 .andExpect(jsonPath("$.nextBooking.id", is(itemDto.getNextBooking().getBookerId()), Long.class));
 
-        Mockito.verify(itemService, Mockito.times(1)).getItemByIdAndUserId(anyLong(), anyLong());
+        verify(itemService, Mockito.times(1)).getItemByIdAndUserId(anyLong(), anyLong());
     }
 
     @Test
@@ -86,7 +87,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$[0].name", is("Дрель")))
                 .andExpect(jsonPath("$[0].description", is("новая")));
 
-        Mockito.verify(itemService, Mockito.times(1)).searchItemsByText(anyString());
+        verify(itemService, Mockito.times(1)).searchItemsByText(anyString());
     }
 
     @Test
@@ -106,7 +107,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$[0].name", is("Дрель")))
                 .andExpect(jsonPath("$[0].description", is("новая")));
 
-        Mockito.verify(itemService, Mockito.times(1)).getAllItemsByUserId(1L);
+        verify(itemService, Mockito.times(1)).getAllItemsByUserId(1L);
     }
 
     @Test
@@ -126,7 +127,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.name", is("Дрель")))
                 .andExpect(jsonPath("$.description", is("новая")));
 
-        Mockito.verify(itemService, Mockito.times(1)).addItemByUserId(any(), anyLong());
+        verify(itemService, Mockito.times(1)).addItemByUserId(any(), anyLong());
     }
 
     @Test
@@ -154,7 +155,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.text", is("textTest")))
                 .andExpect(jsonPath("$.created", is("11.11.1999 11:11")));
 
-        Mockito.verify(itemService, Mockito.times(1)).addComment(anyLong(), anyLong(), any());
+        verify(itemService, Mockito.times(1)).addComment(anyLong(), anyLong(), any());
     }
 
     @Test
@@ -168,15 +169,15 @@ class ItemControllerTest {
                 .thenReturn(itemDtoUpdated);
 
         mockMvc.perform(patch("/items/{itemid}", 1)
-                .header(USER_REQUEST_HEADER, 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(itemDtoUpdated)))
+                        .header(USER_REQUEST_HEADER, 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(itemDtoUpdated)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("nameUpdate")))
-                .andExpect(jsonPath("$.available", is (false)))
+                .andExpect(jsonPath("$.available", is(false)))
                 .andExpect(jsonPath("$.description", is("descriptionUpdate")));
 
-        Mockito.verify(itemService, Mockito.times(1))
+        verify(itemService, Mockito.times(1))
                 .updateItem(anyLong(), any(ItemDto.class), anyLong());
     }
 }

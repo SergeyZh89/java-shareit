@@ -1,8 +1,6 @@
 package ru.practicum.shareit.item.service.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
@@ -32,31 +30,25 @@ import java.util.stream.Collectors;
 
 @Service
 @NoArgsConstructor
-@AllArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    @Autowired
     private ItemRepository itemRepository;
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private BookingRepository bookingRepository;
-    @Autowired
     private CommentRepository commentRepository;
-    @Autowired
     private ItemRequestRepository itemRequestRepository;
 
-//    @Autowired
-//    public ItemServiceImpl(ItemRepository itemRepository,
-//                           UserRepository userRepository,
-//                           BookingRepository bookingRepository,
-//                           CommentRepository commentRepository,
-//                           ItemRequestRepository itemRequestRepository) {
-//        this.itemRepository = itemRepository;
-//        this.userRepository = userRepository;
-//        this.bookingRepository = bookingRepository;
-//        this.commentRepository = commentRepository;
-//        this.itemRequestRepository = itemRequestRepository;
-//    }
+    @Autowired
+    public ItemServiceImpl(ItemRepository itemRepository,
+                           UserRepository userRepository,
+                           BookingRepository bookingRepository,
+                           CommentRepository commentRepository,
+                           ItemRequestRepository itemRequestRepository) {
+        this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
+    }
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
@@ -90,7 +82,6 @@ public class ItemServiceImpl implements ItemService {
         }
         Comment comment = commentRepository.save(CommentMapper.toComment(commentDto));
         commentDto.setId(comment.getId());
-//        return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto)));
         return commentDto;
     }
 
@@ -150,27 +141,20 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItemByUserId(ItemDto itemDto, long userId) {
-        if (userId <= 0) {
+        if (userId <= 0 || userRepository.findAll().stream()
+                .filter(user -> user.getId() == userId).findAny().isEmpty()) {
             throw new UserNotFoundException("Такого пользователя не существует");
-        } else {
-            userRepository.findAll().stream()
-                    .filter(user -> user.getId() == userId)
-                    .findAny()
-                    .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует"));
         }
-        if (itemDto.getAvailable() == null) {
+
+        if (itemDto.getAvailable() == null || itemDto.getName().isEmpty() || itemDto.getDescription() == null) {
             throw new ValidatorExceptions("Неверные данные");
         }
-        if (itemDto.getName().isEmpty()) {
-            throw new ValidatorExceptions("Неверные данные");
-        }
-        if (itemDto.getDescription() == null) {
-            throw new ValidatorExceptions("Неверные данные");
-        }
+
         itemDto.setOwner(userId);
         Item item = ItemMapper.toItem(itemDto);
         if (itemDto.getRequestId() != 0) {
-            item.setRequest(itemRequestRepository.findById(itemDto.getRequestId()).get());
+            item.setRequest(itemRequestRepository
+                    .findById(itemDto.getRequestId()).orElse(null));
         }
         itemRepository.save(item);
         itemDto.setId(item.getId());

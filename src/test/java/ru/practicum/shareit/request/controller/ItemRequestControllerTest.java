@@ -128,10 +128,10 @@ class ItemRequestControllerTest {
                 .thenReturn(itemRequestDto);
 
         mockMvc.perform(post("/requests")
-                .header(USER_REQUEST_HEADER, 1L)
-                .content(mapper.writeValueAsString(itemRequestDto))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .header(USER_REQUEST_HEADER, 1L)
+                        .content(mapper.writeValueAsString(itemRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
