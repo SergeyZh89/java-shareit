@@ -56,8 +56,8 @@ class ItemRequestDtoTest {
         assertThat(result).extractingJsonPathArrayValue("$.items")
                 .extracting("available")
                 .contains(true);
-        assertThat(result).extractingJsonPathArrayValue("$.items").
-                extracting("requestId")
+        assertThat(result).extractingJsonPathArrayValue("$.items")
+                .extracting("requestId")
                 .contains(2);
     }
 }
