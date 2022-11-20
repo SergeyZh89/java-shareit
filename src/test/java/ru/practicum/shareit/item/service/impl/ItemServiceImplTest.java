@@ -14,6 +14,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.status.Status;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -34,6 +35,8 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -95,6 +98,7 @@ class ItemServiceImplTest {
     private Booking booking = new Booking().toBuilder()
             .id(1)
             .item(item)
+            .booker(user)
             .status(Status.APPROVED)
             .build();
 
@@ -140,9 +144,23 @@ class ItemServiceImplTest {
 
     @Test
     void getItemByIdAndUserId() {
+        booking.setStart(LocalDateTime.of(2000, 11, 11, 11, 11));
+        booking.setEnd(LocalDateTime.of(2000, 11, 11, 11, 12));
+
+        Mockito
+                .when(bookingRepository.findByItem_IdAndItem_Owner(anyLong(), anyLong()))
+                .thenReturn(List.of(booking));
+
         Mockito
                 .when(itemRepository.findById(anyLong()))
-                .thenReturn(Optional.ofNullable(item));
+                .thenAnswer(invocationOnMock -> {
+                    long itemId = invocationOnMock.getArgument(0, Long.class);
+                    if (itemId <= 0) {
+                        throw new ItemNotFoundException("Такой вещи не существует");
+                    } else {
+                        return Optional.ofNullable(item);
+                    }
+                });
 
         ItemDto targetItem = itemService.getItemByIdAndUserId(1L, 1L);
 
@@ -150,7 +168,12 @@ class ItemServiceImplTest {
         Assertions.assertEquals(targetItem.getDescription(), item.getDescription());
         Assertions.assertEquals(targetItem.getId(), item.getId());
 
-        verify(itemRepository, times(1)).findById(anyLong());
+        Throwable thrown = assertThrows(ItemNotFoundException.class,
+                () -> itemService.getItemByIdAndUserId(1L, 0));
+        assertNotNull(thrown.getMessage());
+
+        verify(itemRepository, times(2)).findById(anyLong());
+        verify(bookingRepository, times(2)).findByItem_IdAndItem_Owner(anyLong(), anyLong());
     }
 
     @Test
@@ -200,7 +223,6 @@ class ItemServiceImplTest {
         item.setId(1L);
         item.setOwner(1L);
         List<Item> sourceList = List.of(item);
-        List<ItemDto> sourceDtoList = sourceList.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
 
         Item itemOther = new Item().toBuilder()
                 .id(2L)

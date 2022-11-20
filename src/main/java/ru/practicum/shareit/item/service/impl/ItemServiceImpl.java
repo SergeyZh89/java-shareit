@@ -165,9 +165,6 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItem(long userId, ItemDto itemDto, long itemId) {
         Item itemFound = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Такой вещи не существует"));
-        if (itemId <= 0 || userId <= 0) {
-            throw new ItemNotFoundException("Такой вещи не существует");
-        }
         List<ItemDto> itemList = getAllItemsByUserId(userId);
         itemList.stream()
                 .filter(item -> item.getId() == itemId)
