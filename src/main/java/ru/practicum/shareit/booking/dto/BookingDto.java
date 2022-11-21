@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.status.Status;
@@ -12,13 +13,14 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
 public class BookingDto {
     private long id;
 
-    @FutureOrPresent(message = "Время бронирования не должен быть в прошлом")
+    @FutureOrPresent(message = "Время старта бронирования не должно быть в прошлом")
     private LocalDateTime start;
 
-    @Future(message = "Время бронирования не должен быть в прошлом")
+    @Future(message = "Время окончания бронирования не должен быть в прошлом")
     private LocalDateTime end;
 
     private long itemId;
@@ -30,14 +32,20 @@ public class BookingDto {
     private Status status;
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder(toBuilder = true)
     public static class Item {
-        private final long id;
+        private long id;
 
-        private final String name;
+        private String name;
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder(toBuilder = true)
     public static class User {
-        private final long id;
+        private long id;
     }
 }

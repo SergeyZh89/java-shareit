@@ -3,12 +3,15 @@ package ru.practicum.shareit.booking.controller;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Validated
@@ -40,18 +43,26 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> findAllBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
+                                                   @RequestParam(defaultValue = "0")
+                                                   @PositiveOrZero int from,
+                                                   @RequestParam(defaultValue = "10") @Positive int size,
                                                    @RequestParam(required = false, defaultValue = "ALL")
                                                    String state) {
         log.info("Получен запрос на поиск брони по бронирующему: " + ownerId + " в статусе: " + state);
-        return bookingService.findAllBookingsByOwner(ownerId, state);
+        int page = from / size;
+        return bookingService.findAllBookingsByOwner(ownerId, state, PageRequest.of(page, size));
     }
 
     @GetMapping
     public List<BookingDto> findBookingsByUserIdByState(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                        @RequestParam(defaultValue = "0")
+                                                        @PositiveOrZero int from,
+                                                        @RequestParam(defaultValue = "10") @Positive int size,
                                                         @RequestParam(required = false, defaultValue = "ALL")
                                                         String state) {
         log.info("Получен запрос на поиск брони по владельцу: " + userId + " в статусе: " + state);
-        return bookingService.findBookingsByUserByState(userId, state);
+        int page = from / size;
+        return bookingService.findBookingsByUserByState(userId, state, PageRequest.of(page, size));
     }
 
     @PatchMapping("/{bookingId}")
