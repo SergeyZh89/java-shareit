@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
@@ -35,6 +37,7 @@ public class ItemDto {
     private List<ItemComments> comments;
 
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ItemBooking {
@@ -44,6 +47,7 @@ public class ItemDto {
     }
 
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ItemComments {
