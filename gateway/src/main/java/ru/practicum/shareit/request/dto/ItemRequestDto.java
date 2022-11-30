@@ -1,15 +1,12 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
@@ -25,7 +22,7 @@ public class ItemRequestDto {
 
     private List<ItemsRequest> items;
 
-    @Data
+    @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder(toBuilder = true)
