@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
@@ -35,6 +36,7 @@ public class ItemDto {
     private List<ItemComments> comments;
 
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ItemBooking {
@@ -44,6 +46,7 @@ public class ItemDto {
     }
 
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ItemComments {

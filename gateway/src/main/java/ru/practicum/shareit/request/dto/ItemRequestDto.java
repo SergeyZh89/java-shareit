@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
@@ -23,6 +24,7 @@ public class ItemRequestDto {
     private List<ItemsRequest> items;
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder(toBuilder = true)
