@@ -144,19 +144,18 @@ class UserControllerTest {
     void testUpdateUser() throws Exception {
         userDto.setName("Bob");
         userDto.setEmail("bob@mail.ru");
-        when(userService.updateUser(userDto, 1))
+        when(userService.updateUser(any(), anyLong()))
                 .thenReturn(userDto);
 
         mockMvc.perform(patch("/users/1")
                         .content(mapper.writeValueAsString(userDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(jsonPath("$.name", is("Bob")))
                 .andExpect(jsonPath("$.email", is("bob@mail.ru")))
                 .andExpect(status().isOk());
 
-        Mockito.verify(userService, Mockito.times(1)).updateUser(userDto, 1);
+        Mockito.verify(userService, Mockito.times(1)).updateUser(any(), anyLong());
     }
 
     @Test
